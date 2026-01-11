@@ -3,42 +3,43 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Github, Image as ImageIcon, MonitorPlay, ChevronLeft, ChevronRight } from "lucide-react"
+import { ExternalLink, Github, Eye, Zap } from "lucide-react"
 import { useScrollAnimation } from "../hooks/use-scroll-animation"
-import { useState } from "react"
+import { useRef, useState, MouseEvent } from "react"
 import { motion } from "framer-motion"
 
+// --- Configuration & Data ---
 const projectsData = [
   {
-    title: "Real-Time Disaster Management System",
-    description: "A capstone project designed to aid rescue operations in hazardous environments. Utilizes YOLOv11 for real-time object detection to identify victims and hazards.",
-    image: "/placeholder.svg?height=400&width=600",
+    title: "Real-Time Disaster Management",
+    description: "Capstone project aiding rescue ops. Utilizes YOLOv11 for real-time object detection to identify victims/hazards in hazardous environments.",
+    image: "/placeholder.svg?height=600&width=800", // Larger image for flagship
     technologies: ["Python", "YOLOv11", "OpenCV"],
-    liveUrl: "#",
+    liveUrl: "https://disaster-management-brown.vercel.app/",
     githubUrl: "https://github.com/Raghav-Maheshwari2004",
-    status: "Capstone",
+    status: "Flagship",
   },
   {
     title: "Dynamic Meeting Scheduler",
-    description: "Full-stack app for seamless booking. Leverages AJAX for instant availability checks without page reloads. Robust PHP backend.",
-    image: "/placeholder.svg?height=400&width=600",
+    description: "Full-stack booking app. Leverages AJAX for instant availability checks without page reloads. Robust PHP backend.",
+    image: "/placeholder.svg?height=600&width=400", // Taller image
     technologies: ["PHP", "AJAX", "MySQL"],
     liveUrl: "#",
     githubUrl: "#",
-    status: "Completed",
+    status: "Core Tech",
   },
   {
-    title: "Weather Forecast Dashboard",
-    description: "Responsive weather app integrating OpenWeatherMap API for real-time forecasts, humidity, and wind speed with dynamic UI updates.",
+    title: "Weather Dashboard",
+    description: "Responsive app with OpenWeatherMap API for real-time forecasts and dynamic UI.",
     image: "/placeholder.svg?height=400&width=600",
     technologies: ["React.js", "API", "CSS"],
-    liveUrl: "#",
+    liveUrl: "https://dynamic-weather-visualizer.vercel.app/",
     githubUrl: "#",
     status: "Live",
   },
   {
-    title: "Hostel Management System",
-    description: "Comprehensive portal for hostel operations, bookings, and payments. Separate logins for Admin, Resident, and Manager roles.",
+    title: "Hostel Portal",
+    description: "Comprehensive portal for hostel operations. Separate logins for Admin, Resident, and Manager roles.",
     image: "/placeholder.svg?height=400&width=600",
     technologies: ["PHP", "MySQL", "Bootstrap"],
     liveUrl: "#",
@@ -46,197 +47,188 @@ const projectsData = [
     status: "Dev",
   },
   {
-    title: "Skillizer AI Platform",
-    description: "AI-based scoring and feedback using Gemini AI API to evaluate user skills. Features personalized dashboards and reports.",
+    title: "Skillizer AI",
+    description: "AI-based scoring and feedback using Gemini API to evaluate user skills with personalized reports.",
     image: "/images/skillizer.png",
-    technologies: ["React", "Firebase", "Gemini AI"],
-    liveUrl: "#",
+    technologies: ["React", "Firebase", "Gemini"],
+    liveUrl: "https://skillizer.vercel.app/",
     githubUrl: "#",
   },
   {
-    title: "Talksy Chat App",
-    description: "Real-time chat application using Firestore for instant message synchronization and Firebase Storage for media sharing.",
+    title: "Talksy Chat",
+    description: "Real-time chat using Firestore for instant synchronization and media sharing.",
     image: "/images/talksy2.png",
     technologies: ["React", "Firebase", "Firestore"],
-    liveUrl: "#",
+    liveUrl: "https://talksy-wxza.vercel.app/",
     githubUrl: "#",
   },
 ]
 
-export function Projects() {
-  const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation()
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [showLivePreview, setShowLivePreview] = useState(false)
+// --- Spotlight Card Component ---
+// This handles the "Flashlight" effect on hover
+function SpotlightCard({ 
+  children, 
+  className = "", 
+  spotlightColor = "rgba(59, 130, 246, 0.25)" // Electric Blue
+}: { 
+  children: React.ReactNode; 
+  className?: string; 
+  spotlightColor?: string;
+}) {
+  const divRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [opacity, setOpacity] = useState(0);
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % projectsData.length)
-    setShowLivePreview(false)
-  }
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!divRef.current) return;
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + projectsData.length) % projectsData.length)
-    setShowLivePreview(false)
-  }
+    const div = divRef.current;
+    const rect = div.getBoundingClientRect();
 
-  const getDistanceFromCenter = (index: number) => {
-    const length = projectsData.length
-    let distance = index - currentIndex
-    if (distance > length / 2) distance -= length
-    if (distance < -length / 2) distance += length
-    return distance
-  }
+    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  const handleMouseEnter = () => setOpacity(1);
+  const handleMouseLeave = () => setOpacity(0);
 
   return (
-    // Changed bg to match theme
-    <section id="projects" className="py-24 bg-background relative overflow-hidden">
+    <div
+      ref={divRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`relative overflow-hidden rounded-xl border border-white/10 bg-[#0F172A] text-slate-200 shadow-2xl ${className}`}
+    >
+      {/* The Moving Spotlight Gradient */}
+      <div
+        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300"
+        style={{
+          opacity,
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
+        }}
+      />
+      {/* Content Container */}
+      <div className="relative h-full">{children}</div>
+    </div>
+  );
+}
+
+// --- Main Projects Component ---
+export function Projects() {
+  const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation()
+
+  return (
+    <section id="projects" className="py-24 bg-[#020617] relative overflow-hidden">
       
-      {/* Subtle Gradient Background for this section */}
-      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+      {/* Deep Tech Grid Background Texture */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
         
+        {/* Section Header */}
         <div
           ref={titleRef}
           className={`text-center mb-16 transition-all duration-1000 ${
             titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <h2 className="text-3xl sm:text-5xl font-bold mb-4">
-             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Featured Works</span>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-white">
+            Featured <span className="text-blue-500">Works</span>
           </h2>
+          <p className="text-slate-400 max-w-2xl mx-auto">
+            A selection of complex problems solved with elegant engineering.
+          </p>
         </div>
 
-        <div className="relative h-[600px] sm:h-[700px] flex items-center justify-center perspective-[1200px]">
+        {/* BENTO GRID LAYOUT */}
+        <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[300px] gap-6 max-w-7xl mx-auto">
+          
           {projectsData.map((project, index) => {
-            const distance = getDistanceFromCenter(index)
-            const absDistance = Math.abs(distance)
-            const canPreview = project.liveUrl !== "#"
-            const isActive = distance === 0
-
-            let zIndex = 10 - absDistance
-            let scale = 1 - absDistance * 0.1
-            let xOffset = distance === 0 ? "0%" : distance > 0 ? `${absDistance * 40}%` : `${absDistance * -40}%`
-            let blur = absDistance * 4 
-            let brightness = 1 - absDistance * 0.3
-            let opacity = absDistance > 2 ? 0 : 1 
+            // Determine Bento Grid Spans based on index
+            // Index 0: Flagship (Large Square 2x2)
+            // Index 1: Technical (Tall Vertical 1x2)
+            // Others: Standard (1x1)
+            const isFlagship = index === 0;
+            const isTechnical = index === 1;
+            
+            let gridClass = "col-span-1 row-span-1"; 
+            if (isFlagship) gridClass = "md:col-span-2 md:row-span-2";
+            if (isTechnical) gridClass = "md:col-span-1 md:row-span-2";
 
             return (
-               <motion.div
-                key={index}
-                className="absolute top-1/2 left-1/2 origin-center w-[300px] sm:w-[380px] md:w-[420px] h-[500px] sm:h-[600px]"
-                initial={false}
-                animate={{
-                  x: `calc(-50% + ${xOffset})`,
-                  y: "-50%",
-                  scale: scale,
-                  zIndex: zIndex,
-                  opacity: opacity,
-                  filter: `blur(${blur}px) brightness(${brightness})`,
-                }}
-                transition={{ type: "spring", stiffness: 150, damping: 25 }}
-                style={{ 
-                   pointerEvents: isActive ? 'auto' : 'none' 
-                }}
-              >
-                {/* Standardized Card Style */}
-                <Card className={`h-full w-full overflow-hidden border-0 shadow-2xl bg-card/90 backdrop-blur-md ${isActive ? 'ring-1 ring-primary/30 shadow-primary/10' : ''} flex flex-col`}>
+              <SpotlightCard key={index} className={`${gridClass} group flex flex-col`}>
+                <Card className="h-full w-full bg-transparent border-0 flex flex-col justify-between">
                   
-                  <div className="relative h-[45%] w-full bg-black/20 overflow-hidden group border-b border-white/5">
-                     {isActive && showLivePreview && canPreview ? (
-                      <iframe
-                        src={project.liveUrl}
-                        className="w-full h-full border-0 animate-in fade-in"
-                        title={`${project.title} Preview`}
-                        sandbox="allow-scripts allow-same-origin"
-                      />
-                    ) : (
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
-                      />
+                  {/* Image / Preview Area */}
+                  <div className={`relative overflow-hidden w-full ${isFlagship ? 'h-[60%]' : 'h-[50%]'} bg-slate-950/50`}>
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                    />
+                    
+                    {/* Floating Status Badge */}
+                    {project.status && (
+                       <Badge variant="secondary" className="absolute top-4 left-4 bg-blue-500/10 text-blue-400 border-blue-500/20 backdrop-blur-md z-10">
+                         {project.status}
+                       </Badge>
                     )}
 
-                    {isActive && canPreview && (
-                      <div className="absolute top-3 right-3 z-30">
-                         <Button
-                          size="sm"
-                          variant="outline"
-                          className="h-8 bg-black/60 backdrop-blur-md border-white/10 hover:bg-black/80 text-xs gap-1"
-                          onClick={() => setShowLivePreview(!showLivePreview)}
-                        >
-                          {showLivePreview ? <ImageIcon className="h-3 w-3" /> : <MonitorPlay className="h-3 w-3" />}
-                          {showLivePreview ? "Image" : "Live"}
-                        </Button>
-                      </div>
-                    )}
-                    
-                     {project.status && (
-                      <div className="absolute top-3 left-3 z-30">
-                        <Badge variant="secondary" className="bg-primary/20 text-primary-foreground border-primary/20 backdrop-blur-md">
-                            {project.status}
-                        </Badge>
-                      </div>
-                    )}
+                    {/* Overlay Action Buttons (Visible on Hover) */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                       {project.liveUrl !== "#" && (
+                         <Button size="sm" variant="default" className="bg-blue-600 hover:bg-blue-500 rounded-full" asChild>
+                           <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                             <ExternalLink className="w-4 h-4 mr-2" /> Live Demo
+                           </a>
+                         </Button>
+                       )}
+                       {project.githubUrl !== "#" && (
+                         <Button size="sm" variant="outline" className="border-white/20 bg-black/50 text-white hover:bg-white/10 rounded-full" asChild>
+                           <a href={project.githubUrl} target="_blank" rel="noreferrer">
+                             <Github className="w-4 h-4 mr-2" /> Code
+                           </a>
+                         </Button>
+                       )}
+                    </div>
                   </div>
 
-                  <CardHeader className="p-5 flex-grow flex flex-col justify-between">
-                    <div>
-                        <CardTitle className="text-xl sm:text-2xl mb-3">{project.title}</CardTitle>
-                        
-                        <motion.div 
-                            animate={{ opacity: isActive ? 1 : 0.5 }} 
-                            className="overflow-hidden"
-                        >
-                            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed mb-4">
-                                {project.description}
-                            </p>
-                            <div className="flex flex-wrap gap-2 mb-4">
-                                {project.technologies.map((tech, i) => (
-                                <Badge key={i} variant="outline" className="border-primary/10 bg-primary/5 text-[10px] sm:text-xs px-2 py-1">
-                                    {tech}
-                                </Badge>
-                                ))}
-                            </div>
-                        </motion.div>
+                  {/* Text Content */}
+                  <CardHeader className="p-6 flex-grow flex flex-col justify-start relative z-20 bg-[#0F172A]">
+                    <div className="flex justify-between items-start mb-2">
+                       <CardTitle className={`text-white font-bold ${isFlagship ? 'text-2xl' : 'text-xl'}`}>
+                         {project.title}
+                       </CardTitle>
                     </div>
 
-                    <div className="flex gap-3 mt-auto">
-                        <Button size="sm" className="flex-1" asChild disabled={!canPreview}>
-                            <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                                <ExternalLink className="h-4 w-4 mr-2" /> Visit
-                            </a>
-                        </Button>
-                        <Button size="sm" variant="outline" className="flex-1" asChild>
-                            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                                <Github className="h-4 w-4 mr-2" /> Code
-                            </a>
-                        </Button>
+                    <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">
+                      {project.description}
+                    </p>
+
+                    {/* Tech Stack Pills */}
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {project.technologies.map((tech, i) => (
+                        <Badge 
+                          key={i} 
+                          variant="outline" 
+                          className="border-blue-500/20 bg-blue-500/5 text-blue-300/80 text-[10px] px-2 py-0.5 hover:border-blue-500/50 transition-colors"
+                        >
+                          {tech}
+                        </Badge>
+                      ))}
                     </div>
                   </CardHeader>
                 </Card>
-              </motion.div>
+              </SpotlightCard>
             )
           })}
         </div>
-
-        <div className="flex justify-center gap-4 mt-8">
-          <Button
-            onClick={handlePrev}
-            variant="outline"
-            size="lg"
-            className="rounded-full border-primary/10 bg-background/50 backdrop-blur-sm px-6"
-          >
-            <ChevronLeft className="mr-2 h-5 w-5" /> PREV
-          </Button>
-          <Button
-            onClick={handleNext}
-            className="rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-6"
-            size="lg"
-          >
-             NEXT <ChevronRight className="ml-2 h-5 w-5" />
-          </Button>
+        
+        {/* Bottom CTA (Optional) */}
+        <div className="flex justify-center mt-12">
+           <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/5">
+             View All Repositories <Github className="ml-2 h-4 w-4" />
+           </Button>
         </div>
 
       </div>
