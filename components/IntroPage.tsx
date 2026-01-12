@@ -1,189 +1,159 @@
 "use client"
 
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { useState, useEffect, useMemo } from "react"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Sparkles, Code, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-// --- 1. PUZZLE SHAPE GENERATOR ---
-const generatePuzzlePath = (row: number, col: number, width: number, height: number) => {
-    const seed = (r: number, c: number, side: string) => Math.sin(r * 99 + c * 13 + (side === "v" ? 1 : 0)) > 0 ? 1 : -1
-    const tabSize = Math.min(width, height) * 0.20; 
-
-    const top = row === 0 ? 0 : -seed(row, col, "h");
-    const right = col === 11 ? 0 : seed(row, col + 1, "v");
-    const bottom = row === 9 ? 0 : seed(row + 1, col, "h");
-    const left = col === 0 ? 0 : -seed(row, col, "v");
-
-    let path = `M 0 0`;
-    if (top !== 0) path += ` L ${width * 0.4} 0 C ${width * 0.4} ${top * tabSize} ${width * 0.6} ${top * tabSize} ${width * 0.6} 0`;
-    path += ` L ${width} 0`;
-    
-    if (right !== 0) path += ` L ${width} ${height * 0.4} C ${width + right * tabSize} ${height * 0.4} ${width + right * tabSize} ${height * 0.6} ${width} ${height * 0.6}`;
-    path += ` L ${width} ${height}`;
-
-    if (bottom !== 0) path += ` L ${width * 0.6} ${height} C ${width * 0.6} ${height + bottom * tabSize} ${width * 0.4} ${height + bottom * tabSize} ${width * 0.4} ${height}`;
-    path += ` L 0 ${height}`;
-
-    if (left !== 0) path += ` L 0 ${height * 0.6} C ${left * tabSize} ${height * 0.6} ${left * tabSize} ${height * 0.4} 0 ${height * 0.4}`;
-    path += ` Z`;
-    
-    return path;
-}
-
-// --- 2. SINGLE PUZZLE PIECE ---
-const PuzzlePiece = ({ 
-    data, 
-    status, 
-    onComplete 
-}: { 
-    data: any, 
-    status: "IDLE" | "FALLING" | "RISING" | "ASSEMBLED",
-    onComplete?: () => void 
-}) => {
-    const w = 100; 
-    const h = 100;
-    const pathData = useMemo(() => generatePuzzlePath(data.row, data.col, w, h), [data.row, data.col]);
-
-    const isFalling = status === "FALLING";
-    const isRising = status === "RISING";
-    const isAssembled = status === "ASSEMBLED";
-
-    return (
-        <motion.div
-            className="absolute z-20"
-            style={{
-                width: `${100 / 12}%`,
-                height: `${100 / 10}%`,
-                left: `${(data.col / 12) * 100}%`,
-                top: `${(data.row / 10) * 100}%`,
-                zIndex: isFalling || isRising ? 50 : 10 
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{
-                y: isFalling ? "120vh" : "0vh",
-                rotate: isFalling ? data.randomRotate : 0,
-                rotateX: isFalling ? data.randomRotate * 2 : 0,
-                scale: isFalling ? 0.8 : (isRising || isAssembled) ? 1.05 : 0.5, 
-                opacity: (isFalling || isRising || isAssembled) ? 1 : 0
-            }}
-            transition={{
-                duration: isFalling ? 1.2 : 0.8,
-                ease: isFalling ? "easeIn" : "backOut",
-                delay: isFalling ? data.fallDelay : data.riseDelay
-            }}
-            onAnimationComplete={onComplete}
-        >
-            <svg viewBox={`-20 -20 ${w + 40} ${h + 40}`} className="w-[140%] h-[140%] -ml-[20%] -mt-[20%] overflow-visible drop-shadow-2xl">
-                {/* THEME LOGIC:
-                    - Class `fill-slate-100`: Light mode color (Light Gray)
-                    - Class `dark:fill-[#1e293b]`: Dark mode color (Slate Blue)
-                    - Class `stroke-blue-500/30`: Subtle blue border for both
-                */}
-                <path 
-                    d={pathData} 
-                    className="fill-slate-100 dark:fill-[#1e293b] stroke-blue-500/50 dark:stroke-blue-400/50 transition-colors duration-500"
-                    strokeWidth="1.5"
-                />
-                
-                {/* Texture/Highlight Layer */}
-                <path 
-                    d={pathData} 
-                    fill="currentColor" 
-                    fillOpacity="0.1"
-                    className="text-black dark:text-white mix-blend-overlay pointer-events-none"
-                />
-            </svg>
-        </motion.div>
-    )
-}
-
-// --- 3. FRAGMENT ENGINE ---
+// --- 1. THE FRAGMENT ASSEMBLY ENGINE ---
 const FragmentAssemblyOverlay = ({ 
-    status,
+    isFalling, 
+    isRising, 
     onComplete 
 }: { 
-    status: "IDLE" | "FALLING" | "RISING" | "ASSEMBLED";
+    isFalling: boolean; 
+    isRising: boolean; 
     onComplete: () => void 
 }) => {
+    // Configuration: Grid Dimensions
     const rows = 10;
     const cols = 12;
     const totalPieces = rows * cols;
 
+    // Generate grid pieces with random delays for organic movement
     const shards = useMemo(() => {
         return [...Array(totalPieces)].map((_, i) => ({
             id: i,
-            row: Math.floor(i / cols),
-            col: i % cols,
+            // Random scatter for "Pile" effect
             randomRotate: (Math.random() - 0.5) * 90, 
-            fallDelay: Math.random() * 0.3,
-            riseDelay: Math.random() * 0.8 
+            randomScale: 0.8 + Math.random() * 0.4,
+            // Delays:
+            // Fall: Random + slightly bottom-heavy?
+            fallDelay: Math.random() * 0.3, 
+            // Rise: Random delay so they don't all snap at once
+            riseDelay: Math.random() * 0.6,
+            // Random horizontal drift for more organic feel
+            randomX: (Math.random() - 0.5) * 50
         }))
     }, [])
 
     return (
-        <div className="fixed inset-0 z-[200] pointer-events-none">
+        <div className="fixed inset-0 z-[200] pointer-events-none flex flex-wrap overflow-hidden">
             {shards.map((shard, index) => (
-                <PuzzlePiece 
+                <motion.div
                     key={shard.id}
-                    data={shard}
-                    status={status}
-                    onComplete={() => {
-                        if (status === "RISING" && index === totalPieces - 1) {
-                            setTimeout(onComplete, 100) 
+                    className="relative border-[0.5px] border-white/10 bg-gradient-to-br from-slate-900 to-slate-800 shadow-lg" // Enhanced visual
+                    style={{
+                        width: `${100 / cols}%`,
+                        height: `${100 / rows}%`,
+                    }}
+                    initial={{ opacity: 0, y: 0, scale: 1, rotate: 0 }}
+                    animate={{ 
+                        // ANIMATION LOGIC:
+                        // 1. If Falling: Drop down off screen with rotation and scale
+                        // 2. If Rising: Snap back to 0 (Grid position)
+                        y: isFalling 
+                           ? "140vh" 
+                           : isRising 
+                             ? "0vh" 
+                             : "0vh", 
+                        
+                        // Rotation: Spin when falling, straighten when rising
+                        rotate: isFalling ? shard.randomRotate : 0,
+                        
+                        // Scale: Shrink when falling, normal when rising
+                        scale: isFalling ? shard.randomScale : 1,
+                        
+                        // Horizontal drift for more organic falling
+                        x: isFalling ? shard.randomX : 0,
+
+                        // Opacity: Visible only when active
+                        opacity: (isFalling || isRising) ? 1 : 0
+                    }}
+                    transition={{ 
+                        duration: isFalling ? 1.8 : 1.5,
+                        // Fall = Accelerate (Gravity), Rise = Decelerate (Snap)
+                        ease: isFalling ? "easeIn" : [0.25, 0.1, 0.25, 1], 
+                        delay: isFalling ? shard.fallDelay : shard.riseDelay 
+                    }}
+                    // Cleanup: When the last piece finishes rising, trigger real page
+                    onAnimationComplete={() => {
+                        if (isRising && index === totalPieces - 1) {
+                            setTimeout(onComplete, 150)
                         }
                     }}
-                />
+                >
+                    {/* Enhanced visual effects for rising pieces */}
+                    {isRising && (
+                        <>
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 transition-opacity duration-1000" />
+                            <div className="absolute inset-0 bg-white/5 animate-pulse" />
+                        </>
+                    )}
+                    
+                    {/* Subtle glow effect when falling */}
+                    {isFalling && (
+                        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5" />
+                    )}
+                </motion.div>
             ))}
         </div>
     )
 }
 
-// --- 4. MAIN INTRO COMPONENT ---
+// --- 2. MAIN INTRO COMPONENT ---
 export default function IntroPage({ onFinish }: { onFinish: () => void }) {
   const [step, setStep] = useState(0)
-  const [status, setStatus] = useState<"IDLE" | "FALLING" | "RISING" | "ASSEMBLED">("IDLE")
+  
+  // Animation States
+  const [status, setStatus] = useState<"IDLE" | "FALLING" | "RISING">("IDLE")
 
   useEffect(() => {
+    // Intro Sequence (Text Fade In)
     const sequence = async () => {
       await new Promise(r => setTimeout(r, 500))
-      setStep(1)
+      setStep(1) // Blur In Name
       await new Promise(r => setTimeout(r, 1200))
-      setStep(2)
+      setStep(2) // Subtitle
       await new Promise(r => setTimeout(r, 800))
-      setStep(3)
+      setStep(3) // Button
     }
     sequence()
   }, [])
 
   const handleEnter = async () => {
+      // 1. Start Falling Phase
       setStatus("FALLING")
-      await new Promise(r => setTimeout(r, 1600))
-      setStatus("RISING")
-  }
 
-  const handleAssemblyComplete = () => {
-      setStatus("ASSEMBLED") 
-      onFinish() 
+      // 2. Wait for pieces to drop (approx 1.2s + delays)
+      await new Promise(r => setTimeout(r, 1500))
+
+      // 3. Start Rising Phase (The Rebuild)
+      setStatus("RISING")
+      
+      // Note: onFinish is called by the FragmentOverlay when it finishes rising
   }
 
   return (
-    <motion.div
-      // 1. Theme-Aware Background: White in Light Mode, Midnight Blue in Dark Mode
-      className="fixed inset-0 z-[100] bg-white dark:bg-[#020617] flex flex-col items-center justify-center overflow-hidden transition-colors duration-500"
-      exit={{ opacity: 0 }} 
-      transition={{ duration: 2.5, ease: "easeInOut" }}
-    >
-      {/* Background Texture (Inverted for visibility in light mode) */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 mix-blend-multiply dark:mix-blend-overlay" 
+    <div className="fixed inset-0 z-[100] bg-[#020617] flex flex-col items-center justify-center overflow-hidden">
+      
+      {/* 1. BACKGROUND LAYERS (Static Texture) */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0 mix-blend-overlay" 
            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
       />
-      
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#020617_100%)] z-0 pointer-events-none" />
+
+
+      {/* 2. THE FRAGMENT SYSTEM (Always mounted, controlled by props) */}
       <FragmentAssemblyOverlay 
-          status={status}
-          onComplete={handleAssemblyComplete}
+          isFalling={status === "FALLING"}
+          isRising={status === "RISING"}
+          onComplete={onFinish}
       />
 
+
+      {/* 3. MAIN INTRO CONTENT */}
+      {/* We wrap this in AnimatePresence so it can fade out when FALLING starts */}
       <AnimatePresence>
         {status === "IDLE" && (
             <motion.div 
@@ -191,7 +161,7 @@ export default function IntroPage({ onFinish }: { onFinish: () => void }) {
                 className="relative z-10 flex flex-col items-center"
                 exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)", transition: { duration: 0.8 } }}
             >
-                {/* NAME: Dark Text in Light Mode, White in Dark Mode */}
+                {/* Name */}
                 <div className="relative overflow-hidden mb-6 p-2">
                     <motion.h1 
                         initial={{ opacity: 0, filter: "blur(20px)", y: 20 }}
@@ -201,30 +171,36 @@ export default function IntroPage({ onFinish }: { onFinish: () => void }) {
                             y: step >= 1 ? 0 : 20
                         }}
                         transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }} 
-                        className="text-4xl sm:text-6xl md:text-7xl font-light text-slate-900 dark:text-white tracking-[0.2em] text-center transition-colors duration-500"
+                        className="text-4xl sm:text-6xl md:text-7xl font-light text-white tracking-[0.2em] text-center"
                     >
                         RAGHAV MAHESHWARI
                     </motion.h1>
                 </div>
 
+                {/* Separator */}
                 <motion.div 
                     initial={{ width: 0, opacity: 0 }}
                     animate={{ width: step >= 2 ? "200px" : 0, opacity: step >= 2 ? 1 : 0 }}
                     transition={{ duration: 1.2, ease: "circOut" }}
-                    className="h-[1px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent mb-6"
+                    className="h-[1px] bg-gradient-to-r from-transparent via-blue-400/50 to-transparent mb-6"
                 />
 
+                {/* Subtitle */}
                 <motion.div
                     initial={{ opacity: 0, letterSpacing: "0em" }}
-                    animate={{ opacity: step >= 2 ? 1 : 0, letterSpacing: step >= 2 ? "0.15em" : "0em" }}
+                    animate={{ 
+                        opacity: step >= 2 ? 1 : 0,
+                        letterSpacing: step >= 2 ? "0.15em" : "0em" 
+                    }}
                     transition={{ duration: 1.5, delay: 0.2 }}
-                    className="flex items-center gap-3 text-slate-500 dark:text-slate-400 text-sm sm:text-base font-light uppercase transition-colors duration-500"
+                    className="flex items-center gap-3 text-slate-400/80 text-sm sm:text-base font-light uppercase"
                 >
                     <span>Full-Stack Engineer</span>
                     <span className="w-1 h-1 bg-blue-500 rounded-full" /> 
                     <span>Problem Solver</span>
                 </motion.div>
 
+                {/* Enter Button */}
                 <div className="mt-16 h-12">
                     <AnimatePresence>
                     {step >= 3 && (
@@ -237,7 +213,7 @@ export default function IntroPage({ onFinish }: { onFinish: () => void }) {
                             <Button
                                 onClick={handleEnter} 
                                 variant="ghost" 
-                                className="group text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-500 font-light tracking-widest text-xs sm:text-sm"
+                                className="group text-slate-300 hover:text-white hover:bg-white/5 transition-all duration-500 font-light tracking-widest text-xs sm:text-sm"
                             >
                                 <span className="flex items-center gap-2">
                                    ENTER EXPERIENCE
@@ -251,6 +227,6 @@ export default function IntroPage({ onFinish }: { onFinish: () => void }) {
             </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }
