@@ -304,87 +304,20 @@ html[data-theme="dark"] {
 [data-theme="light"] .dark\:scale-0 {
   transform: scale(0);
 }
+/* Add to globals.css */
 
-/* ========================================
-   V0 WATERMARK REMOVAL - CSS OVERRIDE
-   ======================================== */
-
-/* Hide v0 watermark/attribution tags */
-[data-v0-watermark],
-.v0-watermark,
-div[style*="Built with"],
-div[style*="built with"],
-div[style*="v0"],
-div[style*="V0"],
-*[class*="watermark"],
-*[id*="watermark"],
-*[data-testid*="watermark"],
-div[style*="position: fixed"][style*="bottom"],
-div[style*="position: absolute"][style*="bottom"][style*="right"],
-div[style*="z-index: 9999"],
-div[style*="z-index: 999999"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  position: absolute !important;
-  left: -9999px !important;
-  top: -9999px !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
+.vertical-text { 
+    writing-mode: vertical-rl; 
+    text-orientation: mixed; 
+    transform: rotate(180deg); /* Fixes upside down orientation */
 }
 
-/* Additional selectors for common watermark patterns */ \
-div:has-text("Built with"),
-\
-div:has-text("built with"),
-\
-div:has-text("v0"),
-\
-div:has-text("V0"),
-a[href*="v0.dev"],
-a[href*="vercel.com/templates"] {
-  display: none !important;
-  visibility: hidden !important;
+@keyframes shimmer {
+  100% {
+    left: 100%;
+  }
 }
 
-/* Target elements in bottom-right corner that might be watermarks */
-body > div:last-child[style*="position: fixed"][style*="bottom"][style*="right"],
-body > div:last-child[style*="position: absolute"][style*="bottom"][style*="right"] {
-  display: none !important;
-}
-
-/* Hide any floating elements in bottom corners */
-div[style*="position: fixed"][style*="bottom: 0"][style*="right: 0"],
-div[style*="position: fixed"][style*="bottom: 10px"][style*="right: 10px"],
-div[style*="position: fixed"][style*="bottom: 20px"][style*="right: 20px"],
-div[style*="position: absolute"][style*="bottom: 0"][style*="right: 0"],
-div[style*="position: absolute"][style*="bottom: 10px"][style*="right: 10px"],
-div[style*="position: absolute"][style*="bottom: 20px"][style*="right: 20px"] {
-  display: none !important;
-  visibility: hidden !important;
-}
-
-/* Target common watermark text content - Note: :contains() is not standard CSS */
-/* These selectors are commented out as they're not supported by browsers */
-/* *:contains("Built with v0"), */
-/* *:contains("Built with V0"), */
-/* *:contains("Powered by v0"), */
-/* *:contains("Made with v0") {
-  display: none !important;
-} */
-
-/* Aggressive hiding for persistent watermarks */
-body::after,
-html::after,
-#__next::after,
-[data-reactroot]::after {
-  content: none !important;
-}
-
-/* Remove any injected styles that might show watermarks */
-style[data-v0],
-style[data-watermark] {
-  display: none !important;
+.animate-spin-slow {
+    animation: spin 8s linear infinite;
 }

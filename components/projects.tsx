@@ -13,7 +13,7 @@ const projectsData = [
   {
     title: "Real-Time Disaster Management",
     description: "Capstone project aiding rescue ops. Utilizes YOLOv11 for real-time object detection to identify victims/hazards in hazardous environments.",
-    image: "/placeholder.svg?height=600&width=800", // Larger image for flagship
+    image: "/placeholder.svg?height=600&width=800",
     technologies: ["Python", "YOLOv11", "OpenCV"],
     liveUrl: "https://disaster-management-brown.vercel.app/",
     githubUrl: "https://github.com/Raghav-Maheshwari2004",
@@ -22,7 +22,7 @@ const projectsData = [
   {
     title: "Dynamic Meeting Scheduler",
     description: "Full-stack booking app. Leverages AJAX for instant availability checks without page reloads. Robust PHP backend.",
-    image: "/placeholder.svg?height=600&width=400", // Taller image
+    image: "/placeholder.svg?height=600&width=400",
     technologies: ["PHP", "AJAX", "MySQL"],
     liveUrl: "#",
     githubUrl: "#",
@@ -65,11 +65,10 @@ const projectsData = [
 ]
 
 // --- Spotlight Card Component ---
-// This handles the "Flashlight" effect on hover
 function SpotlightCard({ 
   children, 
   className = "", 
-  spotlightColor = "rgba(59, 130, 246, 0.25)" // Electric Blue
+  spotlightColor = "rgba(59, 130, 246, 0.25)" 
 }: { 
   children: React.ReactNode; 
   className?: string; 
@@ -97,7 +96,7 @@ function SpotlightCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden rounded-xl border border-white/10 bg-[#0F172A] text-slate-200 shadow-2xl ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-[#0F172A] text-slate-900 dark:text-slate-200 shadow-lg dark:shadow-2xl transition-colors duration-300 ${className}`}
     >
       {/* The Moving Spotlight Gradient */}
       <div
@@ -118,11 +117,9 @@ export function Projects() {
   const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation()
 
   return (
-    <section id="projects" className="py-24 bg-[#020617] relative overflow-hidden">
+    // Grid texture removed here
+    <section id="projects" className="py-24 bg-slate-50 dark:bg-[#020617] relative overflow-hidden transition-colors duration-500">
       
-      {/* Deep Tech Grid Background Texture */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 pointer-events-none" />
-
       <div className="container mx-auto px-4 relative z-10">
         
         {/* Section Header */}
@@ -132,10 +129,10 @@ export function Projects() {
             titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-white">
-            Featured <span className="text-blue-500">Works</span>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-slate-900 dark:text-white">
+            Featured <span className="text-blue-600 dark:text-blue-500">Works</span>
           </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
+          <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             A selection of complex problems solved with elegant engineering.
           </p>
         </div>
@@ -144,10 +141,6 @@ export function Projects() {
         <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[300px] gap-6 max-w-7xl mx-auto">
           
           {projectsData.map((project, index) => {
-            // Determine Bento Grid Spans based on index
-            // Index 0: Flagship (Large Square 2x2)
-            // Index 1: Technical (Tall Vertical 1x2)
-            // Others: Standard (1x1)
             const isFlagship = index === 0;
             const isTechnical = index === 1;
             
@@ -157,34 +150,34 @@ export function Projects() {
 
             return (
               <SpotlightCard key={index} className={`${gridClass} group flex flex-col`}>
-                <Card className="h-full w-full bg-transparent border-0 flex flex-col justify-between">
+                <Card className="h-full w-full bg-transparent border-0 flex flex-col justify-between shadow-none">
                   
                   {/* Image / Preview Area */}
-                  <div className={`relative overflow-hidden w-full ${isFlagship ? 'h-[60%]' : 'h-[50%]'} bg-slate-950/50`}>
+                  <div className={`relative overflow-hidden w-full ${isFlagship ? 'h-[60%]' : 'h-[50%]'} bg-slate-200 dark:bg-slate-950/50`}>
                     <img 
                       src={project.image} 
                       alt={project.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 dark:opacity-80 group-hover:opacity-100"
                     />
                     
                     {/* Floating Status Badge */}
                     {project.status && (
-                       <Badge variant="secondary" className="absolute top-4 left-4 bg-blue-500/10 text-blue-400 border-blue-500/20 backdrop-blur-md z-10">
+                       <Badge variant="secondary" className="absolute top-4 left-4 bg-white/80 dark:bg-blue-500/10 text-slate-900 dark:text-blue-400 border border-slate-200 dark:border-blue-500/20 backdrop-blur-md z-10">
                          {project.status}
                        </Badge>
                     )}
 
-                    {/* Overlay Action Buttons (Visible on Hover) */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                    {/* Overlay Action Buttons */}
+                    <div className="absolute inset-0 bg-white/60 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
                        {project.liveUrl !== "#" && (
-                         <Button size="sm" variant="default" className="bg-blue-600 hover:bg-blue-500 rounded-full" asChild>
+                         <Button size="sm" variant="default" className="bg-blue-600 hover:bg-blue-500 rounded-full text-white shadow-lg" asChild>
                            <a href={project.liveUrl} target="_blank" rel="noreferrer">
                              <ExternalLink className="w-4 h-4 mr-2" /> Live Demo
                            </a>
                          </Button>
                        )}
                        {project.githubUrl !== "#" && (
-                         <Button size="sm" variant="outline" className="border-white/20 bg-black/50 text-white hover:bg-white/10 rounded-full" asChild>
+                         <Button size="sm" variant="outline" className="border-slate-300 dark:border-white/20 bg-white dark:bg-black/50 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-full shadow-lg" asChild>
                            <a href={project.githubUrl} target="_blank" rel="noreferrer">
                              <Github className="w-4 h-4 mr-2" /> Code
                            </a>
@@ -194,14 +187,14 @@ export function Projects() {
                   </div>
 
                   {/* Text Content */}
-                  <CardHeader className="p-6 flex-grow flex flex-col justify-start relative z-20 bg-[#0F172A]">
+                  <CardHeader className="p-6 flex-grow flex flex-col justify-start relative z-20 bg-white dark:bg-[#0F172A] transition-colors duration-300">
                     <div className="flex justify-between items-start mb-2">
-                       <CardTitle className={`text-white font-bold ${isFlagship ? 'text-2xl' : 'text-xl'}`}>
+                       <CardTitle className={`text-slate-900 dark:text-white font-bold ${isFlagship ? 'text-2xl' : 'text-xl'}`}>
                          {project.title}
                        </CardTitle>
                     </div>
 
-                    <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4 flex-grow">
                       {project.description}
                     </p>
 
@@ -211,7 +204,7 @@ export function Projects() {
                         <Badge 
                           key={i} 
                           variant="outline" 
-                          className="border-blue-500/20 bg-blue-500/5 text-blue-300/80 text-[10px] px-2 py-0.5 hover:border-blue-500/50 transition-colors"
+                          className="border-blue-200 dark:border-blue-500/20 bg-blue-50 dark:bg-blue-500/5 text-blue-700 dark:text-blue-300/80 text-[10px] px-2 py-0.5"
                         >
                           {tech}
                         </Badge>
@@ -224,9 +217,9 @@ export function Projects() {
           })}
         </div>
         
-        {/* Bottom CTA (Optional) */}
+        {/* Bottom CTA */}
         <div className="flex justify-center mt-12">
-           <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-white/5">
+           <Button variant="ghost" className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/5 transition-colors">
              View All Repositories <Github className="ml-2 h-4 w-4" />
            </Button>
         </div>
