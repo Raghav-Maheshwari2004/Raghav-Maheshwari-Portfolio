@@ -13,7 +13,7 @@ const currentProjectData = [
   {
     title: "WeNAV - Live Navigation & Tracking",
     description: "A real-time location-sharing app featuring secure, room-based trip tracking, dynamic routing with custom UI aesthetics, and real-time ETA calculation.",
-    image: "/images/WeNAV.png",
+    image: "/images/wenav.png",
     technologies: ["Flutter", "Firebase", "Google Maps API"],
     liveUrl: "#",
     githubUrl: "https://github.com/Raghav-Maheshwari2004/WeNAV",
