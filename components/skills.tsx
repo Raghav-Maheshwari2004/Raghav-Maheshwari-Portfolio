@@ -11,56 +11,56 @@ export function Skills() {
 
   const skillCategories = [
     {
-      title: "Core Languages",
+      title: "Languages & Core",
       skills: [
         { name: "Java", icon: getIcon("java") },
-        { name: "Python", icon: getIcon("python") },
         { name: "C++", icon: getIcon("cplusplus") },
+        { name: "Python", icon: getIcon("python") },
         { name: "JavaScript", icon: getIcon("javascript") },
-        { name: "PHP", icon: getIcon("php") },
+        { name: "TypeScript", icon: getIcon("typescript") },
         { name: "SQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
+        { name: "DSA", icon: "https://img.icons8.com/color/48/code.png" },
       ],
     },
     {
-      title: "Frontend & Design",
+      title: "Frontend",
       skills: [
         { name: "React.js", icon: getIcon("react") },
+        { name: "Redux", icon: getIcon("redux") },
         { name: "HTML5", icon: getIcon("html5") },
         { name: "CSS3", icon: getIcon("css3") },
-        { name: "Tailwind", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
+        { name: "Tailwind CSS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
         { name: "Bootstrap", icon: getIcon("bootstrap") },
-        { name: "Framer Motion", icon: "https://cdn.worldvectorlogo.com/logos/framer-motion.svg" },
       ],
     },
     {
-      title: "AI & Computer Vision",
-      skills: [
-        { name: "OpenCV", icon: getIcon("opencv") },
-        { name: "PyTorch", icon: getIcon("pytorch") },
-        { name: "TensorFlow", icon: getIcon("tensorflow") },
-        { name: "YOLOv11", icon: "https://img.icons8.com/color/48/artificial-intelligence.png" },
-        { name: "MediaPipe", icon: "https://mediapipe.dev/images/logo_horizontal.png" },
-        { name: "Gemini API", icon: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg" },
-      ],
-    },
-    {
-      title: "Backend & Cloud",
+      title: "Backend & DB",
       skills: [
         { name: "Node.js", icon: getIcon("nodejs") },
-        { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original-wordmark.svg" },
+        { name: "Express.js", icon: getIcon("express") },
+        { name: "RESTful APIs", icon: "https://img.icons8.com/color/48/api-settings.png" },
         { name: "Firebase", icon: getIcon("firebase") },
-        { name: "Azure", icon: getIcon("azure") },
         { name: "MongoDB", icon: getIcon("mongodb") },
+        { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original-wordmark.svg" },
       ],
     },
     {
-      title: "Tools & Platforms",
+      title: "AI/ML",
       skills: [
+        { name: "PyTorch", icon: getIcon("pytorch") },
+        { name: "YOLO", icon: "https://img.icons8.com/color/48/artificial-intelligence.png" },
+        { name: "Gemini API", icon: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Google_Gemini_logo.svg" },
+        { name: "OpenCV", icon: getIcon("opencv") },
+        { name: "NLP", icon: "https://img.icons8.com/color/48/natural-language-processing.png" },
+        { name: "Prompt Engineering", icon: "https://img.icons8.com/color/48/chatbot.png" },
+      ],
+    },
+    {
+      title: "Cloud, CRM & Tools",
+      skills: [
+        { name: "AWS", icon: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" },
+        { name: "Salesforce CRM", icon: getIcon("salesforce") },
         { name: "Git", icon: getIcon("git") },
-        { name: "GitHub", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" },
-        { name: "VS Code", icon: getIcon("vscode") },
-        { name: "Postman", icon: "https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg" },
-        { name: "Vercel", icon: "https://assets.vercel.com/image/upload/v1588805858/repositories/vercel/logo.png" },
       ],
     },
   ]

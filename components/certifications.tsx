@@ -22,6 +22,16 @@ export function Certifications() {
       color: "from-blue-500 to-cyan-500"
     },
     {
+      title: "Machine Learning with Python",
+      issuer: "IBM",
+      date: "2026",
+      credentialId: "f25a59e8801e49989ee5720bb39de52b",
+      description: "Gained hands-on experience in building and deploying machine learning models using Python and scikit-learn",
+      skills: ["Python", "Scikit-learn", "Machine Learning"],
+      verifyUrl: "https://courses.cognitiveclass.ai/certificates/f25a59e8801e49989ee5720bb39de52b",
+      color: "from-red-500 to-yellow-500"
+    },
+    {
       title: "Frontend Development Certificate",
       issuer: "Professional Certification",
       date: "2024",
