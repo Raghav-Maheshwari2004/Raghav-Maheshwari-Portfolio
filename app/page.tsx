@@ -11,6 +11,7 @@ import { Hero } from "../components/hero"
 import { Skills } from "../components/skills"
 import { Projects } from "../components/projects"
 import { Experience } from "../components/experience"
+import { Innovations } from "../components/innovations"
 import { Contact } from "../components/contact"
 import { Navigation } from "../components/navigation"
 import { Certifications } from "../components/certifications"
@@ -47,6 +48,7 @@ export default function Portfolio() {
             
             <main style={{ paddingTop: "64px" }}>
               <Hero />
+              <Innovations />
               <Skills />
               <Projects />
               <Experience />

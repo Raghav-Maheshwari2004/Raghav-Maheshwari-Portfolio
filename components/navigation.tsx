@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Moon, Sun, Menu, X, Download } from "lucide-react"
+import { Moon, Sun, Menu, X, Download, Lightbulb } from "lucide-react"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -27,6 +27,7 @@ export function Navigation() {
 
   const navItems = [
     { href: "#home", label: "Home" },
+    { href: "#innovations", label: "Innovations", icon: Lightbulb },
     { href: "#skills", label: "Skills" },
     { href: "#projects", label: "Projects" },
     { href: "#experience", label: "Experience" },
@@ -78,7 +79,8 @@ export function Navigation() {
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
-                <span className={hoveredPath === item.href ? "text-primary" : "text-muted-foreground"}>
+                <span className={hoveredPath === item.href ? "text-primary flex items-center gap-1.5" : "text-muted-foreground flex items-center gap-1.5"}>
+                  {item.icon && <item.icon className="w-4 h-4 text-yellow-500" />}
                   {item.label}
                 </span>
               </a>
@@ -150,8 +152,9 @@ export function Navigation() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-2xl font-semibold text-muted-foreground hover:text-primary transition-colors py-2 border-b border-white/5"
+                  className="text-2xl font-semibold text-muted-foreground hover:text-primary transition-colors py-2 border-b border-white/5 flex items-center gap-2"
                 >
+                  {item.icon && <item.icon className="w-6 h-6 text-yellow-500" />}
                   {item.label}
                 </motion.a>
               ))}
