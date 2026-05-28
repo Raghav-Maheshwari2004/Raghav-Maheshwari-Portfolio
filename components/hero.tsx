@@ -55,7 +55,7 @@ export function Hero() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full">
-            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-6 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-6 tracking-tight pb-2">
               <span className="bg-gradient-to-b from-black to-black/60 dark:from-white dark:to-white/60 bg-clip-text text-transparent">
                 Raghav Maheshwari
               </span>
@@ -83,7 +83,7 @@ export function Hero() {
             </Button>
             <Button variant="outline" size="lg" className="w-full sm:w-auto min-w-[160px] h-12 text-base border-border hover:bg-muted text-foreground hover:text-foreground" asChild>
               <a
-                href="https://drive.google.com/file/d/1bVntMEC01NiQeyCR1vMYrbjkbUwSiddI/view?usp=sharing"
+                href="https://drive.google.com/file/d/14Qs5VUfPeyTQALvHuJGFF4FJqQbHs9jI/view?usp=drive_link"
                 target="_blank"
                 rel="noopener noreferrer"
               >

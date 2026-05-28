@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Moon, Sun, Menu, X, Download, Lightbulb } from "lucide-react"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion"
+import ThemeSwitch from "./ThemeSwitch"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -89,15 +90,7 @@ export function Navigation() {
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-3 z-20">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-              className="rounded-full hover:bg-primary/10"
-            >
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
+            <ThemeSwitch />
 
             <Button asChild size="sm" className="rounded-full px-5 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
               <a
@@ -112,14 +105,7 @@ export function Navigation() {
 
           {/* Mobile Menu Toggle */}
           <div className="flex md:hidden items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-              className="rounded-full"
-            >
-              {resolvedTheme === "dark" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-            </Button>
+            <ThemeSwitch />
 
             <Button
               variant="ghost"

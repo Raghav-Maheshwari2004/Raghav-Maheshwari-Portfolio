@@ -12,109 +12,148 @@ import { ArrowRight } from "lucide-react"
 extend({ UnrealBloomPass })
 
 const ParticleSwarm = () => {
-    const meshRef = useRef<any>();
-    const count = 20000;
-    const speedMult = 0.1;
-    const dummy = useMemo(() => new THREE.Object3D(), []);
-    const target = useMemo(() => new THREE.Vector3(), []);
-    const pColor = useMemo(() => new THREE.Color(), []);
-    const color = pColor; // Alias for user code compatibility
+  const meshRef = useRef<any>(null);
+  const count = 20000;
+  const speedMult = 1;
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const target = useMemo(() => new THREE.Vector3(), []);
+  const pColor = useMemo(() => new THREE.Color(), []);
+  const color = pColor; // Alias for user code compatibility
+  
+  const positions = useMemo(() => {
+     const pos = [];
+     for(let i=0; i<count; i++) pos.push(new THREE.Vector3((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100));
+     return pos;
+  }, []);
 
-    const positions = useMemo(() => {
-        const pos = [];
-        for (let i = 0; i < count; i++) pos.push(new THREE.Vector3((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100, (Math.random() - 0.5) * 100));
-        return pos;
-    }, []);
+  // Material & Geom
+  const material = useMemo(() => new THREE.MeshBasicMaterial({ color: 0xffffff }), []);
+  const geometry = useMemo(() => new THREE.TetrahedronGeometry(0.25), []);
 
-    // Material & Geom
-    const material = useMemo(() => new THREE.MeshBasicMaterial({ color: 0xffffff }), []);
-    const geometry = useMemo(() => new THREE.TetrahedronGeometry(0.25), []);
+  const PARAMS = useMemo(() => ({"scale":80,"chaos":1,"fold":1.57,"drift":0.3}), []);
+  const addControl = (id: string, l: string, min: number, max: number, val: number) => {
+      // @ts-ignore
+      return PARAMS[id] !== undefined ? PARAMS[id] : val;
+  };
+  const setInfo = (title?: string, desc?: string) => {};
+  const annotate = (id: string, pos: THREE.Vector3, label: string) => {};
 
-    const PARAMS = useMemo(() => ({ "scale": 110, "activity": 2.5, "separation": 5, "complexity": 8 }), []);
-    const addControl = (id: string, l: string, min: number, max: number, val: number) => {
-        // @ts-ignore
-        return PARAMS[id] !== undefined ? PARAMS[id] : val;
-    };
-    const setInfo = (title?: string, desc?: string) => { };
-    const annotate = (id: string, pos: THREE.Vector3, label: string) => { };
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    const time = state.clock.getElapsedTime() * speedMult;
+    const THREE_LIB = THREE;
 
-    useFrame((state) => {
-        if (!meshRef.current) return;
-        const time = state.clock.getElapsedTime() * speedMult;
-        const THREE_LIB = THREE;
+    // @ts-ignore
+    if(material.uniforms && material.uniforms.uTime) {
+         // @ts-ignore
+         material.uniforms.uTime.value = time;
+    }
 
-        // @ts-ignore
-        if (material.uniforms && material.uniforms.uTime) {
-            // @ts-ignore
-            material.uniforms.uTime.value = time;
+    for (let i = 0; i < count; i++) {
+        // USER CODE START
+        const scale = addControl("scale", "Universe Scale", 20, 200, 80);
+        const chaos = addControl("chaos", "Quantum Chaos", 0, 3, 1.0);
+        const fold = addControl("fold", "4D Fold Angle", 0, 6.28, 1.57);
+        const drift = addControl("drift", "Cosmic Drift", 0, 2, 0.3);
+        
+        if (i === 0) {
+          setInfo("Tesseract Observer", "The universe as seen from the 4th dimension. Time is the 4D axis folding 3D space into itself. Each particle is a quantum of spacetime.");
+          annotate("singularity", new THREE.Vector3(0, 0, 0), "Origin");
+          annotate("horizon", new THREE.Vector3(scale * 0.6, 0, 0), "Event Horizon");
         }
+        
+        const t = time * 0.18;
+        const phi = (i / count) * 6.2831853;
+        const theta = Math.acos(1 - 2 * ((i * 1.6180339887) % 1));
+        
+        // 4D hypercube basis: map particle index to 4D hyperspherical coords
+        const layer = Math.floor(i / (count * 0.25));
+        const localT = (i % (count * 0.25)) / (count * 0.25);
+        const psi = localT * 6.2831853 + t;
+        const xi = phi + t * 0.07 * (layer + 1);
+        
+        // 4D coordinates (w is time dimension)
+        const r4 = scale * (0.3 + 0.7 * (i / count));
+        const sinTh = Math.sin(theta);
+        const cosTh = Math.cos(theta);
+        const sinPhi = Math.sin(xi);
+        const cosPhi = Math.cos(xi);
+        const sinPsi = Math.sin(psi + fold);
+        const cosPsi = Math.cos(psi + fold);
+        
+        // Raw 4D point on hypersphere
+        let x4 = r4 * sinTh * cosPhi;
+        let y4 = r4 * sinTh * sinPhi;
+        let z4 = r4 * cosTh;
+        let w4 = r4 * cosPsi * 0.9;
+        
+        // 4D->3D stereographic projection from w-axis viewpoint
+        // Observer sits at w = viewW, projecting onto w=0 hyperplane
+        const viewW = scale * (1.2 + 0.4 * Math.sin(t * 0.5));
+        const wDenom = viewW - w4;
+        const wSafe = wDenom + (Math.abs(wDenom) < 0.5 ? 0.5 : 0);
+        const proj = viewW / wSafe;
+        
+        let px = x4 * proj;
+        let py = y4 * proj;
+        let pz = z4 * proj;
+        
+        // Quantum chaos field: interference pattern layered on projection
+        const noiseFreq = 0.04 * chaos;
+        const nx = Math.sin(px * noiseFreq + t * 1.3) * Math.cos(py * noiseFreq - t * 0.9);
+        const ny = Math.sin(py * noiseFreq + t * 0.7) * Math.cos(pz * noiseFreq + t * 1.1);
+        const nz = Math.sin(pz * noiseFreq - t * 1.5) * Math.cos(px * noiseFreq + t * 0.6);
+        const noiseAmp = scale * 0.12 * chaos;
+        
+        px += nx * noiseAmp;
+        py += ny * noiseAmp;
+        pz += nz * noiseAmp;
+        
+        // Cosmic expansion drift: radial breathing of the universe
+        const breathe = 1.0 + drift * 0.15 * Math.sin(t * 0.4 + (i / count) * 3.14159);
+        px *= breathe;
+        py *= breathe;
+        pz *= breathe;
+        
+        // Clamp to finite safe range
+        const maxCoord = 600;
+        px = Math.max(-maxCoord, Math.min(maxCoord, px));
+        py = Math.max(-maxCoord, Math.min(maxCoord, py));
+        pz = Math.max(-maxCoord, Math.min(maxCoord, pz));
+        
+        target.set(px, py, pz);
+        
+        // Color: hue encodes 4D w-position (temporal dimension)
+        // Saturation encodes distance from tesseract center
+        // Lightness encodes quantum interference intensity
+        const dist = Math.sqrt(px*px + py*py + pz*pz);
+        const distNorm = Math.min(dist / (scale * 2.5), 1.0);
+        const wNorm = (w4 / (r4 + 0.001)) * 0.5 + 0.5;
+        
+        // Hue: cycles through cosmic spectrum by 4D angle
+        const hue = (wNorm * 0.72 + (i / count) * 0.28 + t * 0.04) % 1.0;
+        // Saturation: higher near tesseract faces, lower at corners
+        const sat = 0.55 + 0.45 * Math.abs(Math.sin(psi * 2.0 + t));
+        // Lightness: bright at interference peaks, dim in voids
+        const interference = 0.5 + 0.5 * Math.sin(distNorm * 9.42 - t * 1.8);
+        const lit = 0.18 + 0.52 * interference * (1.0 - distNorm * 0.4);
+        
+        color.setHSL(hue, sat, lit);
+        // USER CODE END
 
-        for (let i = 0; i < count; i++) {
-            // USER CODE START
-            const scale = addControl("scale", "Brain Scale", 10, 100, 45);
-            const activity = addControl("activity", "Synaptic Activity", 0.1, 10, 2.5);
-            const separation = addControl("separation", "Hemisphere Gap", 0, 20, 5);
-            const complexity = addControl("complexity", "Neural Folding", 1, 15, 8);
+        positions[i].lerp(target, 0.1);
+        dummy.position.copy(positions[i]);
+        dummy.updateMatrix();
+        meshRef.current.setMatrixAt(i, dummy.matrix);
+        meshRef.current.setColorAt(i, pColor);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+  });
 
-            if (i === 0) {
-                setInfo("Neural Network", "Visualizing millions of synaptic connections and action potentials.");
-                annotate("cortex", new THREE.Vector3(0, scale + 15, 0), "Cerebral Cortex Activity");
-            }
-
-            const p = i / count;
-            const goldenRatio = 1.61803398875;
-            const cosVal = Math.max(-1.0, Math.min(1.0, 1.0 - 2.0 * p));
-            const theta = Math.acos(cosVal);
-            const phi = 2.0 * Math.PI * i / goldenRatio;
-
-            const fold = 0.75 + 0.25 * Math.sin(theta * complexity) * Math.cos(phi * complexity + time * 0.2);
-            const radius = scale * fold;
-
-            let x = radius * Math.sin(theta) * Math.cos(phi);
-            let y = radius * Math.sin(theta) * Math.sin(phi);
-            let z = radius * Math.cos(theta);
-
-            x += (x >= 0 ? 1 : -1) * separation;
-
-            const isTract = (i % 60 === 0) ? 1.0 : 0.0;
-            x *= (1.0 - 0.85 * isTract);
-            y *= (1.0 - 0.20 * isTract);
-            z *= (1.0 - 0.50 * isTract);
-
-            const neuronOffset = Math.sin(i * 12.9898 + i * 78.233) * 43758.5453;
-            const firingPhase = neuronOffset + time * activity;
-            const spike = Math.pow(Math.max(0.0, Math.sin(firingPhase)), 40);
-
-            const wave = (Math.sin(y * 0.1 - time * 1.5) + 1.0) * 0.5;
-
-            const jiggle = 0.3 * (1.0 - isTract);
-            const jX = Math.sin(time * 5.0 + i) * jiggle;
-            const jY = Math.cos(time * 6.2 + i * 2.0) * jiggle;
-            const jZ = Math.sin(time * 4.1 - i) * jiggle;
-
-            target.set(x + jX, y + jY, z + jZ);
-
-            const baseHue = 0.65 + p * 0.15;
-            const currentHue = baseHue - spike * 0.15 - isTract * 0.1;
-            const saturation = 0.7 + wave * 0.3;
-            const lightness = Math.max(0.0, Math.min(1.0, (isTract * 0.1) + 0.15 + (wave * 0.15) + (spike * 0.7)));
-
-            color.setHSL(currentHue, saturation, lightness);
-            // USER CODE END
-
-            positions[i].lerp(target, 0.02);
-            dummy.position.copy(positions[i]);
-            dummy.updateMatrix();
-            meshRef.current.setMatrixAt(i, dummy.matrix);
-            meshRef.current.setColorAt(i, pColor);
-        }
-        meshRef.current.instanceMatrix.needsUpdate = true;
-        if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
-    });
-
-    return (
-        <instancedMesh ref={meshRef} args={[geometry, material, count]} />
-    );
+  return (
+    <instancedMesh ref={meshRef} args={[geometry, material, count]} />
+  );
 };
 
 export default function IntroPage({ onFinish }: { onFinish: () => void }) {

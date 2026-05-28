@@ -3,8 +3,9 @@
 import { useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 
-// Import your new Intro Component
-import IntroPage from "../components/IntroPage" 
+// Import your new components
+import IntroPage from "../components/IntroPage"
+import SkeletonPage from "../components/SkeletonPage"
 
 // Your existing components
 import { Hero } from "../components/hero"
@@ -18,8 +19,8 @@ import { Certifications } from "../components/certifications"
 import { Achievements } from "../components/achievements"
 
 export default function Portfolio() {
-  // We default to TRUE so the Intro Page shows first
-  const [showIntro, setShowIntro] = useState(true)
+  // We default to "intro" so the Intro Page shows first
+  const [appState, setAppState] = useState<"intro" | "loading" | "main">("intro")
 
   return (
     <div className="min-h-screen bg-background">
@@ -27,15 +28,31 @@ export default function Portfolio() {
       {/* AnimatePresence with mode="wait" ensures the Intro completely 
         fades out BEFORE the website fades in 
       */}
-      <AnimatePresence >
+      <AnimatePresence mode="wait">
         
-        {showIntro ? (
+        {appState === "intro" && (
           // 1. The Intro Page (Holographic Decode)
           // It handles its own animation logic. When the user clicks the button,
-          // it calls onFinish, setting showIntro to false.
-          <IntroPage key="intro" onFinish={() => setShowIntro(false)} />
-        ) : (
-          // 2. The Main Website
+          // it calls onFinish, setting appState to "loading".
+          <IntroPage key="intro" onFinish={() => setAppState("loading")} />
+        )}
+        
+        {appState === "loading" && (
+          // 2. The Skeleton Loading Page
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="fixed inset-0 z-50 flex"
+          >
+            <SkeletonPage onFinish={() => setAppState("main")} />
+          </motion.div>
+        )}
+        
+        {appState === "main" && (
+          // 3. The Main Website
           // We wrap it in motion.div to give it a slow fade-in effect
           <motion.div
             key="main-site"
