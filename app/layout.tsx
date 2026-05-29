@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TvModeProvider } from "@/components/tv-mode-provider"
+import TVWrapper from "@/components/tv-wrapper"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -41,7 +43,11 @@ export default function RootLayout({
           disableTransitionOnChange={false}
           storageKey="portfolio-theme"
         >
-          {children}
+          <TvModeProvider>
+            <TVWrapper>
+              {children}
+            </TVWrapper>
+          </TvModeProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,0 +1,8 @@
+Model Information:
+* title:	Generic Television set
+* source:	https://sketchfab.com/3d-models/generic-television-set-bda5bb7328e64e688f5359d51e15e656
+* author:	assetfactory (https://sketchfab.com/assetfactory)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

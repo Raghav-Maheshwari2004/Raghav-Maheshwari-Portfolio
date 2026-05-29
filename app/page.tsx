@@ -45,7 +45,7 @@ export default function Portfolio() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-50 flex"
+            className="absolute inset-0 z-50 flex w-full h-full bg-background"
           >
             <SkeletonPage onFinish={() => setAppState("main")} />
           </motion.div>

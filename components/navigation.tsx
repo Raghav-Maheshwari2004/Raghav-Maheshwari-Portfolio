@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Moon, Sun, Menu, X, Download, Lightbulb } from "lucide-react"
+import { Moon, Sun, Menu, X, Download, Lightbulb, Monitor, MonitorOff } from "lucide-react"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion"
 import ThemeSwitch from "./ThemeSwitch"
+import { useTvMode } from "./tv-mode-provider"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -13,17 +14,36 @@ export function Navigation() {
   const [mounted, setMounted] = useState(false)
   const [hoveredPath, setHoveredPath] = useState<string | null>(null)
   const { theme, setTheme, resolvedTheme } = useTheme()
+  const { isTvMode, setIsTvMode } = useTvMode()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
-    const handleScroll = () => {
+    const mobileScroll = document.getElementById("mobile-scroll")
+    const desktopScroll = document.getElementById("desktop-scroll")
+
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement
+      setScrolled(target.scrollTop > 20)
+    }
+
+    const handleWindowScroll = () => {
       setScrolled(window.scrollY > 20)
     }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+
+    // Attach to the specific scrolling containers used by the TV wrapper
+    if (mobileScroll) mobileScroll.addEventListener("scroll", handleScroll)
+    if (desktopScroll) desktopScroll.addEventListener("scroll", handleScroll)
+    // Fallback to window scroll just in case
+    window.addEventListener("scroll", handleWindowScroll)
+
+    return () => {
+      if (mobileScroll) mobileScroll.removeEventListener("scroll", handleScroll)
+      if (desktopScroll) desktopScroll.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("scroll", handleWindowScroll)
+    }
   }, [])
 
   const navItems = [
@@ -44,7 +64,7 @@ export function Navigation() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300 ${scrolled ? "pt-4" : "pt-0"
+        className={`sticky top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300 ${scrolled ? "pt-4" : "pt-0"
           }`}
       >
         <div
@@ -90,6 +110,15 @@ export function Navigation() {
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-3 z-20">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsTvMode(!isTvMode)}
+              className="rounded-full"
+              title={isTvMode ? "Disable TV Mode" : "Enable TV Mode"}
+            >
+              {isTvMode ? <MonitorOff className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
+            </Button>
             <ThemeSwitch />
 
             <Button asChild size="sm" className="rounded-full px-5 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all hover:scale-105">
@@ -105,6 +134,15 @@ export function Navigation() {
 
           {/* Mobile Menu Toggle */}
           <div className="flex md:hidden items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsTvMode(!isTvMode)}
+              className="rounded-full"
+              title={isTvMode ? "Disable TV Mode" : "Enable TV Mode"}
+            >
+              {isTvMode ? <MonitorOff className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
+            </Button>
             <ThemeSwitch />
 
             <Button
