@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useScrollAnimation } from "../hooks/use-scroll-animation"
+import { motion } from "framer-motion"
 
 const getIcon = (slug: string) => `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${slug}/${slug}-original.svg`
 
@@ -67,31 +68,53 @@ export function Skills() {
 
   return (
     <section id="skills" className="py-24 bg-background relative overflow-hidden">
-      
+
       {/* CONTINUOUS GRID PATTERN */}
       <div className="absolute inset-0 h-[80%] w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:linear-gradient(to_bottom,black,transparent)] pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
+        {/* BANNER HEADER SECTION WITH IMAGE BACKGROUND */}
         <div
           ref={titleRef}
-          className={`text-center mb-16 transition-all duration-1000 ${
-            titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+          className={`group relative w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden mb-16 transition-all duration-1000 border border-white/5 shadow-2xl ${titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
+            }`}
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Technical Arsenal</span>
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            The tools and technologies I use to bring ideas to life.
-          </p>
+          {/* Background Image */}
+          <motion.img
+            initial={{ scale: 1.1 }}
+            whileInView={{ scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            src="/images/Technical Arsenal.png"
+            alt="Skills graphic"
+            className="absolute inset-0 w-full h-full object-cover object-right mix-blend-screen opacity-60 md:opacity-100"
+          />
+
+          {/* Gradient Overlays for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent z-10 transition-opacity duration-1000 group-hover:opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent md:hidden z-10" />
+
+          {/* Heading Content */}
+          <div className="relative z-20 px-6 sm:px-10 md:px-16 flex flex-col items-start h-[350px] md:h-[400px] justify-center transition-transform duration-1000 group-hover:translate-x-4">
+            <div className="flex items-center gap-4 mb-4 md:mb-6">
+              <div className="h-px bg-primary w-12 transition-all duration-1000 group-hover:w-24" />
+              <span className="text-primary font-bold tracking-widest uppercase text-xs md:text-sm drop-shadow-md">Expertise</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-foreground tracking-tighter leading-[0.9] max-w-2xl drop-shadow-2xl">
+              Technical <br className="hidden sm:block" /> Arsenal.
+            </h2>
+            <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-muted-foreground max-w-xl transition-opacity duration-1000 opacity-90 group-hover:opacity-100 line-clamp-2 md:line-clamp-none">
+              The tools and technologies I use to bring ideas to life.
+            </p>
+          </div>
         </div>
 
         <div
           ref={skillsRef}
-          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-1000 delay-200 ${
-            skillsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
+          className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-1000 delay-200 ${skillsVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
         >
           {skillCategories.map((category, index) => (
             <Card
@@ -112,10 +135,10 @@ export function Skills() {
                       className="flex items-center gap-2 px-3 py-2 rounded-lg bg-background/50 border shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 cursor-default hover:bg-background"
                     >
                       <div className="w-6 h-6 flex items-center justify-center">
-                        <img 
-                          src={skill.icon} 
-                          alt={skill.name} 
-                          className="w-full h-full object-contain filter group-hover:brightness-110" 
+                        <img
+                          src={skill.icon}
+                          alt={skill.name}
+                          className="w-full h-full object-contain filter group-hover:brightness-110"
                           loading="lazy"
                         />
                       </div>

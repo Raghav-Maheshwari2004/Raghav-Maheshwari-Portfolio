@@ -43,6 +43,25 @@ const currentProjectData: ProjectData[] = [
 
 const projectsData: ProjectData[] = [
   {
+    title: "AI Creative Battle Room",
+    description: "Real-time, stateful multiplayer platform where users compete in AI-powered creative challenges.",
+    image: "/images/poiro.png",
+    technologies: ["React", "FastAPI", "WebSockets", "Gemini API"],
+    liveUrl: "https://poiro-battle-room-six.vercel.app/",
+    githubUrl: "https://github.com/Raghav-Maheshwari2004/AI-Battle-Room-Poiro-Submission",
+    status: "Full-Stack",
+    details: {
+      problem: "The application allows a 'Host' to dictate a creative theme while 'Participants' submit prompts to an AI engine. The host then scores the AI-generated outputs in real-time.",
+      architecture: "Engineered a custom WebSocket manager in FastAPI to broadcast granular UI events, paired with Zustand on the frontend to instantly patch UI state without REST polling. Implemented FastAPI BackgroundTasks for non-blocking asynchronous AI job execution. Built a state-recovery mechanism for resilient disconnect handling.",
+      metrics: [
+        "Real-Time Sync: Granular UI events synced instantly via WebSockets.",
+        "Async Processing: Decoupled AI API latency from UX with background tasks.",
+        "Security: Backend-enforced role authentication for room hosts.",
+        "Resilience: Automatic state-recovery mechanism upon reconnection."
+      ]
+    }
+  },
+  {
     title: "Real-Time Disaster Management",
     description: "Capstone project aiding rescue ops. Utilizes YOLOv11 for real-time object detection to identify victims/hazards in hazardous environments.",
     image: "/images/Disaster.png",
@@ -92,7 +111,7 @@ const projectsData: ProjectData[] = [
   {
     title: "Hostel Portal",
     description: "Comprehensive portal for hostel operations. Separate logins for Admin, Resident, and Manager roles.",
-    image: "/placeholder.svg?height=400&width=600",
+    image: "/images/hostel.png",
     technologies: ["PHP", "MySQL", "Bootstrap"],
     liveUrl: "#",
     githubUrl: "#",
@@ -395,20 +414,36 @@ export function Projects() {
                   </span>
                 ))}
               </div>
-              <Button
-                variant="ghost"
-                className="text-sm font-medium hover:bg-blue-500/10 hover:text-blue-500 group/btn -mr-2"
-                onClick={() => {
-                  setSelectedProject(project);
-                  // Scroll slightly so the split view is centered if on mobile
-                  const el = document.getElementById('projects');
-                  if (el && window.innerWidth < 1024) {
-                    el.scrollIntoView({ behavior: 'smooth' });
-                  }
-                }}
-              >
-                More <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex items-center gap-1">
+                {project.githubUrl !== "#" && (
+                  <Button variant="ghost" size="icon" asChild className="w-8 h-8 hover:bg-secondary">
+                    <a href={project.githubUrl} target="_blank" rel="noreferrer">
+                      <Github className="w-4 h-4" />
+                    </a>
+                  </Button>
+                )}
+                {project.liveUrl !== "#" && (
+                  <Button variant="ghost" size="icon" asChild className="w-8 h-8 hover:bg-blue-500/10 hover:text-blue-500 text-blue-500">
+                    <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  className="text-sm font-medium hover:bg-blue-500/10 hover:text-blue-500 group/btn -mr-2 px-2"
+                  onClick={() => {
+                    setSelectedProject(project);
+                    // Scroll slightly so the split view is centered if on mobile
+                    const el = document.getElementById('projects');
+                    if (el && window.innerWidth < 1024) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  More <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                </Button>
+              </div>
             </div>
           </div>
         </Card>
@@ -498,19 +533,35 @@ export function Projects() {
                                 </span>
                               ))}
                             </div>
-                            <Button
-                              variant="ghost"
-                              className="text-sm font-medium hover:bg-amber-500/10 hover:text-amber-500 group/btn -mr-2"
-                              onClick={() => {
-                                setSelectedProject(project);
-                                const el = document.getElementById('projects');
-                                if (el && window.innerWidth < 1024) {
-                                  el.scrollIntoView({ behavior: 'smooth' });
-                                }
-                              }}
-                            >
-                              More <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-                            </Button>
+                            <div className="flex items-center gap-1">
+                              {project.githubUrl !== "#" && (
+                                <Button variant="ghost" size="icon" asChild className="w-8 h-8 hover:bg-secondary text-foreground">
+                                  <a href={project.githubUrl} target="_blank" rel="noreferrer">
+                                    <Github className="w-4 h-4" />
+                                  </a>
+                                </Button>
+                              )}
+                              {project.liveUrl !== "#" && (
+                                <Button variant="ghost" size="icon" asChild className="w-8 h-8 hover:bg-amber-500/10 hover:text-amber-500 text-amber-500">
+                                  <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                                    <ExternalLink className="w-4 h-4" />
+                                  </a>
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                className="text-sm font-medium hover:bg-amber-500/10 hover:text-amber-500 group/btn -mr-2 px-2"
+                                onClick={() => {
+                                  setSelectedProject(project);
+                                  const el = document.getElementById('projects');
+                                  if (el && window.innerWidth < 1024) {
+                                    el.scrollIntoView({ behavior: 'smooth' });
+                                  }
+                                }}
+                              >
+                                More <ChevronRight className="w-4 h-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </Card>

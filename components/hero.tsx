@@ -37,82 +37,125 @@ export function Hero() {
       </div>
 
       {/* CONTENT LAYER */}
-      <div className="container mx-auto px-4 z-10 relative text-center">
+      <div className="container mx-auto px-4 sm:px-8 z-10 relative">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="flex flex-col items-center w-full max-w-7xl mx-auto"
+          className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] xl:grid-cols-[1.4fr_1fr] gap-8 lg:gap-12 items-center w-full max-w-screen-2xl mx-auto text-left"
         >
-          <motion.div variants={itemVariants}>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-300 text-sm font-medium mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-              </span>
-              Available for Work
+          <div className="flex flex-col items-start">
+            <motion.div variants={itemVariants}>
+              <div className="inline-flex items-center gap-3 mb-8 md:mb-12">
+                <div className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                </div>
+                <span className="text-primary font-bold tracking-widest uppercase text-sm">Available for Work</span>
+              </div>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="w-full">
+              <h1 className="text-5xl sm:text-[5.5rem] md:text-[6.5rem] lg:text-[7rem] xl:text-[8rem] font-black mb-8 tracking-tighter leading-[0.9] pb-4">
+                <span className="bg-gradient-to-b from-black to-black/60 dark:from-white dark:to-white/60 bg-clip-text text-transparent">
+                  Raghav <br className="hidden sm:block" /> Maheshwari.
+                </span>
+              </h1>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="mb-10 flex items-center gap-4 text-xl sm:text-2xl font-semibold text-muted-foreground">
+              <div className="h-px bg-muted-foreground/30 w-12 hidden md:block" />
+              <span>Full-Stack Engineer & Problem Solver</span>
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <p className="text-lg sm:text-xl text-muted-foreground mb-12 max-w-xl leading-relaxed">
+                I transform complex problems into elegant digital solutions.
+                Specializing in <span className="text-primary font-medium">Scalable Web Architecture</span>,
+                <span className="text-primary font-medium"> AI Integration</span>, and
+                <span className="text-primary font-medium"> User-Centric Experiences</span>.
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6 items-start w-full sm:w-auto">
+              <Button size="lg" className="group h-14 px-8 rounded-full text-base font-bold bg-foreground text-background hover:scale-105 transition-transform duration-300 shadow-xl" onClick={scrollToProjects}>
+                Explore My Work
+                <ArrowDown className="ml-3 h-5 w-5 group-hover:translate-y-1 transition-transform" />
+              </Button>
+              <Button variant="outline" size="lg" className="h-14 px-8 rounded-full text-base font-bold border-2 border-border hover:bg-muted" asChild>
+                <a
+                  href="https://drive.google.com/file/d/14Qs5VUfPeyTQALvHuJGFF4FJqQbHs9jI/view?usp=drive_link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Download Resume
+                </a>
+              </Button>
+            </motion.div>
+
+            {/* Social Links Row */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
+              className="mt-20 flex items-center space-x-6"
+            >
+              <a href="https://github.com/Raghav-Maheshwari2004" target="_blank" rel="noopener noreferrer" className="p-3 bg-muted/50 rounded-full text-foreground/70 hover:text-foreground hover:bg-muted transition-all hover:scale-110">
+                <Github className="h-6 w-6" />
+                <span className="sr-only">GitHub</span>
+              </a>
+              <a href="https://www.linkedin.com/in/raghav-maheshwari-803012275/" target="_blank" rel="noopener noreferrer" className="p-3 bg-muted/50 rounded-full text-foreground/70 hover:text-blue-500 hover:bg-blue-500/10 transition-all hover:scale-110">
+                <Linkedin className="h-6 w-6" />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+              <a href="mailto:maheshwari.raghav2004@gmail.com" className="p-3 bg-muted/50 rounded-full text-foreground/70 hover:text-red-500 hover:bg-red-500/10 transition-all hover:scale-110">
+                <Mail className="h-6 w-6" />
+                <span className="sr-only">Email</span>
+              </a>
+            </motion.div>
+          </div>
+
+          {/* THE NEW RIGHT SIDE TERMINAL */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20, rotateY: -10, perspective: 1000 }}
+            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            transition={{ delay: 0.6, duration: 1, type: "spring" }}
+            className="hidden lg:block relative w-full max-w-[28rem] xl:max-w-lg lg:ml-auto xl:mx-auto"
+          >
+            {/* Glow behind the terminal */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur-2xl opacity-20 animate-pulse" />
+            
+            {/* Terminal Window */}
+            <div className="relative rounded-2xl bg-[#09090b]/80 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
+              {/* Terminal Header */}
+              <div className="flex items-center px-4 py-3 border-b border-white/10 bg-white/5">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                </div>
+                <div className="mx-auto text-xs text-muted-foreground font-mono">inference_engine.py</div>
+              </div>
+              
+              {/* Terminal Body */}
+              <div className="p-6 font-mono text-sm leading-relaxed overflow-hidden">
+                <div className="flex flex-col gap-1 text-blue-300/80">
+                  <span><span className="text-pink-500">import</span> cv2</span>
+                  <span><span className="text-pink-500">from</span> ultralytics <span className="text-pink-500">import</span> YOLO</span>
+                  <br />
+                  <span><span className="text-slate-500"># Initialize real-time tracking</span></span>
+                  <span>model = YOLO(<span className="text-amber-300">'yolo11n.pt'</span>)</span>
+                  <span>stream = cv2.VideoCapture(<span className="text-purple-400">0</span>)</span>
+                  <br />
+                  <span><span className="text-pink-500">while</span> <span className="text-purple-400">True</span>:</span>
+                  <span className="pl-4">success, frame = stream.read()</span>
+                  <span className="pl-4">results = model.track(frame, persist=<span className="text-purple-400">True</span>)</span>
+                  <br />
+                  <span className="pl-4 text-emerald-400 animate-pulse">_</span>
+                </div>
+              </div>
             </div>
           </motion.div>
-
-          <motion.div variants={itemVariants} className="w-full">
-            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-6 tracking-tight pb-2">
-              <span className="bg-gradient-to-b from-black to-black/60 dark:from-white dark:to-white/60 bg-clip-text text-transparent">
-                Raghav Maheshwari
-              </span>
-            </h1>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="mb-8 flex items-center justify-center gap-3 text-xl sm:text-2xl md:text-3xl font-light text-blue-700/80 dark:text-blue-200/80">
-            <Terminal className="w-6 h-6 sm:w-8 sm:h-8 opacity-80" />
-            <span>Full-Stack Engineer & Problem Solver</span>
-          </motion.div>
-
-          <motion.div variants={itemVariants}>
-            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed">
-              I transform complex problems into elegant digital solutions.
-              Specializing in <span className="text-blue-600 dark:text-blue-200">Scalable Web Architecture</span>,
-              <span className="text-blue-600 dark:text-blue-200"> AI Integration</span>, and
-              <span className="text-blue-600 dark:text-blue-200"> User-Centric Experiences</span>.
-            </p>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
-            <Button size="lg" className="group w-full sm:w-auto min-w-[160px] h-12 text-base bg-blue-600 hover:bg-blue-500 text-white border-0 shadow-lg shadow-blue-900/20" onClick={scrollToProjects}>
-              View Selected Work
-              <ArrowDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
-            </Button>
-            <Button variant="outline" size="lg" className="w-full sm:w-auto min-w-[160px] h-12 text-base border-border hover:bg-muted text-foreground hover:text-foreground" asChild>
-              <a
-                href="https://drive.google.com/file/d/14Qs5VUfPeyTQALvHuJGFF4FJqQbHs9jI/view?usp=drive_link"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Download Resume
-              </a>
-            </Button>
-          </motion.div>
-
-        </motion.div>
-
-        {/* Social Links Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mt-16 flex justify-center items-center space-x-8"
-        >
-          <a href="https://github.com/Raghav-Maheshwari2004" target="_blank" rel="noopener noreferrer" className="p-3 text-slate-400 hover:text-white transition-all hover:scale-110">
-            <Github className="h-7 w-7" />
-            <span className="sr-only">GitHub</span>
-          </a>
-          <a href="https://www.linkedin.com/in/raghav-maheshwari-803012275/" target="_blank" rel="noopener noreferrer" className="p-3 text-slate-400 hover:text-blue-400 transition-all hover:scale-110">
-            <Linkedin className="h-7 w-7" />
-            <span className="sr-only">LinkedIn</span>
-          </a>
-          <a href="mailto:maheshwari.raghav2004@gmail.com" className="p-3 text-slate-400 hover:text-red-400 transition-all hover:scale-110">
-            <Mail className="h-7 w-7" />
-            <span className="sr-only">Email</span>
-          </a>
         </motion.div>
       </div>
 

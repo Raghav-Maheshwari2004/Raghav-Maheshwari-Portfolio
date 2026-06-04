@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Award, Calendar, ShieldCheck, CheckCircle2 } from "lucide-react"
 import { useScrollAnimation } from "../hooks/use-scroll-animation"
+import { motion } from "framer-motion"
 
 export function Certifications() {
   const { ref: titleRef, isVisible: titleVisible } = useScrollAnimation()
@@ -59,20 +60,41 @@ export function Certifications() {
       <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(45deg,transparent_25%,#000_25%,#000_50%,transparent_50%,transparent_75%,#000_75%,#000_100%)] bg-[size:24px_24px]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* BANNER HEADER SECTION WITH IMAGE BACKGROUND */}
         <div
           ref={titleRef}
-          className={`text-center mb-16 transition-all duration-1000 ${titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+          className={`group relative w-full rounded-[2rem] md:rounded-[3rem] overflow-hidden mb-16 transition-all duration-1000 border border-white/5 shadow-2xl ${titleVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
             }`}
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-amber-500/10 rounded-full border border-amber-500/20">
-              <Award className="h-6 w-6 text-amber-500" />
+          {/* Background Image */}
+          <motion.img
+            initial={{ scale: 1.1 }}
+            whileInView={{ scale: 1 }}
+            whileHover={{ scale: 1.05 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            src="/images/Technical Certifications.png"
+            alt="Certifications graphic"
+            className="absolute inset-0 w-full h-full object-cover object-right mix-blend-screen opacity-60 md:opacity-100"
+          />
+
+          {/* Gradient Overlays for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-transparent z-10 transition-opacity duration-1000 group-hover:opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent md:hidden z-10" />
+
+          {/* Heading Content */}
+          <div className="relative z-20 px-6 sm:px-10 md:px-16 flex flex-col items-start h-[350px] md:h-[400px] justify-center transition-transform duration-1000 group-hover:translate-x-4">
+            <div className="flex items-center gap-4 mb-4 md:mb-6">
+              <div className="h-px bg-primary w-12 transition-all duration-1000 group-hover:w-24" />
+              <span className="text-primary font-bold tracking-widest uppercase text-xs md:text-sm drop-shadow-md">Credentials</span>
             </div>
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-foreground tracking-tighter leading-[0.9] max-w-2xl drop-shadow-2xl">
+              Technical <br className="hidden sm:block" /> Certifications.
+            </h2>
+            <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-muted-foreground max-w-xl transition-opacity duration-1000 opacity-90 group-hover:opacity-100 line-clamp-2 md:line-clamp-none">
+              Industry-recognized credentials validating expertise in modern engineering standards.
+            </p>
           </div>
-          <h2 className="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">Technical <span className="text-amber-500">Certifications</span></h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Industry-recognized credentials validating expertise in modern engineering standards.
-          </p>
         </div>
 
         <div
